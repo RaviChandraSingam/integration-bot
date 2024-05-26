@@ -1,0 +1,182 @@
+
+### 1. **Customer Information Management System (CIMS)**
+- **Function**: Manages customer profiles, including personal information, account details, KYC (Know Your Customer) data, and customer preferences.
+- **APIs**: CRUD operations for customer profiles, customer search, and KYC verification.
+- **Batch Components**: Regular updates and synchronization of customer data, data cleansing, and deduplication processes.
+- **Kafka Components**: Real-time updates and notifications for customer data changes, KYC status changes, and customer activity tracking.
+- **Documentation**: API specifications for integrating with other systems, data model documentation, and user guides for batch processes.
+
+### 1. Customer Information Management System (CIMS)
+
+#### Open API Specification (OpenAPI 3.0)
+```yaml
+openapi: 3.0.1
+info:
+  title: Customer Information Management System API
+  version: 1.0.0
+  description: API for managing customer information in the banking system.
+servers:
+  - url: https://api.bank.com/v1
+paths:
+  /customers:
+    get:
+      summary: List all customers
+      responses:
+        '200':
+          description: A list of customers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Customer'
+    post:
+      summary: Create a new customer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Customer'
+      responses:
+        '201':
+          description: Customer created successfully
+  /customers/{customerId}:
+    get:
+      summary: Get a customer by ID
+      parameters:
+        - name: customerId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Customer details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+    put:
+      summary: Update a customer
+      parameters:
+        - name: customerId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Customer'
+      responses:
+        '200':
+          description: Customer updated successfully
+    delete:
+      summary: Delete a customer
+      parameters:
+        - name: customerId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Customer deleted successfully
+components:
+  schemas:
+    Customer:
+      type: object
+      properties:
+        id:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        address:
+          type: string
+        kycStatus:
+          type: string
+```
+
+#### API Documentation
+- **GET /customers**: Retrieves a list of all customers.
+- **POST /customers**: Creates a new customer. Requires a JSON body with customer details.
+- **GET /customers/{customerId}**: Retrieves a customer by their ID.
+- **PUT /customers/{customerId}**: Updates an existing customer. Requires a JSON body with updated customer details.
+- **DELETE /customers/{customerId}**: Deletes a customer by their ID.
+
+#### Code Snippets
+```python
+import requests
+
+# Base URL
+base_url = "https://api.bank.com/v1"
+
+# Get all customers
+response = requests.get(f"{base_url}/customers")
+print(response.json())
+
+# Create a new customer
+new_customer = {
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "john.doe@example.com",
+    "phone": "1234567890",
+    "address": "123 Main St",
+    "kycStatus": "Pending"
+}
+response = requests.post(f"{base_url}/customers", json=new_customer)
+print(response.json())
+
+# Get customer by ID
+customer_id = "customer123"
+response = requests.get(f"{base_url}/customers/{customer_id}")
+print(response.json())
+
+# Update customer
+updated_customer = {
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "john.doe@example.com",
+    "phone": "0987654321",
+    "address": "456 Elm St",
+    "kycStatus": "Verified"
+}
+response = requests.put(f"{base_url}/customers/{customer_id}", json=updated_customer)
+print(response.json())
+
+# Delete customer
+response = requests.delete(f"{base_url}/customers/{customer_id}")
+print(response.status_code)
+```
+
+#### Kafka Topic Details
+- **Topic Name**: `customer-updates`
+- **Purpose**: To stream real-time updates of customer data changes.
+- **Message Format**: JSON
+```json
+{
+  "event": "CUSTOMER_UPDATED",
+  "customerId": "customer123",
+  "changes": {
+    "phone": "0987654321",
+    "address": "456 Elm St",
+    "kycStatus": "Verified"
+  }
+}
+```
+
+#### Documentation
+- **API Specification**: Describes the REST endpoints, request and response formats.
+- **Integration Guide**: Steps on how to use the APIs, including authentication and error handling.
+- **Kafka Integration**: Explains the Kafka topics, message formats, and how to consume messages.
+- **Batch Processing**: Details on scheduled batch processes for data synchronization and cleanup.
+

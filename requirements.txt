@@ -1,0 +1,23 @@
+google-cloud-aiplatform>=1.31.0
+streamlit
+streamlit-chat
+langchain
+google-cloud-aiplatform
+langchain-core
+langchain-google-vertexai
+langchain_community
+chromadb
+Ipython
+typing
+langchain_text_splitters
+# pydantic
+# typing-inspect
+# typing_extensions
+# pandas 
+# datasets 
+# google-api-python-client 
+# pypdf 
+# faiss-cpu 
+# transformers 
+# config 
+# google-cloud-storage

@@ -1,0 +1,163 @@
+
+### **Payment Gateway Integration (PGI)**
+- **Function**: Facilitates integration with various payment gateways for processing online payments, bill payments, and merchant transactions.
+- **APIs**: Process payments, validate payment details, retrieve payment status, and manage payment refunds.
+- **Batch Components**: Scheduled settlement of payments, batch processing of refunds, and reconciliation with payment gateways.
+- **Kafka Components**: Real-time payment processing, payment status updates, and notifications for payment failures or successes.
+- **Documentation**: API integration guides, payment flow documentation, and batch processing instructions.
+
+
+###  Payment Gateway Integration (PGI)
+
+#### Open API Specification (OpenAPI 3.0)
+```yaml
+openapi: 3.0.1
+info:
+  title: Payment Gateway Integration API
+  version: 1.0.0
+  description: API for integrating with payment gateways.
+servers:
+  - url: https://api.bank.com/v1
+paths:
+  /payments:
+    post:
+      summary: Process a payment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Payment'
+      responses:
+        '201':
+          description: Payment processed successfully
+  /payments/{paymentId}:
+    get:
+      summary: Get a payment by ID
+      parameters:
+        - name: paymentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Payment details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+components:
+  schemas:
+    Payment:
+      type: object
+      properties:
+        id:
+          type: string
+        amount:
+          type: number
+        currency:
+          type: string
+        status:
+          type: string
+        fromAccount:
+          type: string
+        toMerchant:
+          type: string
+        timestamp:
+          type: string
+```
+
+#### API Documentation
+- **POST /payments**: Processes a new payment. Requires a JSON body with payment details.
+- **GET /payments/{paymentId}**: Retrieves a payment by its ID.
+
+#### Code Snippets
+```python
+import requests
+
+# Base URL
+base_url = "https://api.bank.com/v1"
+
+# Process a new payment
+new_payment = {
+    "amount": 50.00,
+    "currency": "USD",
+    "fromAccount": "account123",
+    "toMerchant": "merchant456"
+}
+response = requests.post(f"{base_url}/payments", json=new_payment)
+print(response.json())
+
+# Get payment by ID
+payment_id = "payment123"
+response = requests.get(f"{base_url}/payments/{payment_id}")
+print(response.json())
+```
+
+#### Kafka Topic Details
+- **Topic Name**: `payment-events`
+- **Purpose**: To stream real-time payment events.
+- **Message Format**: JSON
+```json
+{
+  "event": "PAYMENT_PROCESSED",
+  "paymentId": "payment123",
+  "details": {
+    "amount": 50.00,
+    "currency": "USD",
+    "fromAccount": "account123",
+    "toMerchant": "merchant456",
+    "status": "Completed",
+    "timestamp": "2024-05-17T12:34:56Z"
+  }
+}
+```
+
+#### Documentation
+- **API Specification**: Details the REST endpoints, request and response formats.
+- **Integration Guide**: Steps on how to use the APIs, including authentication and error handling.
+- **Kafka Integration**: Explains the Kafka topics, message formats, and how to consume messages.
+- **Batch Processing**: Describes periodic batch processes for payment settlements and reconciliations.
+
+---
+
+### Comprehensive Documentation for Integration
+
+#### Overview
+This document outlines the APIs, Kafka topics, and batch processes for the following banking components:
+- Customer Information Management System (CIMS)
+- Transaction Processing System (TPS)
+- Account Management System (AMS)
+- Payment Gateway Integration (PGI)
+
+#### Authentication
+All API endpoints require authentication via an API key. Include the API key in the `Authorization` header of your requests.
+
+```http
+Authorization: Bearer YOUR_API_KEY
+```
+
+#### Error Handling
+All APIs follow a standard error response format:
+
+```json
+{
+  "error": {
+    "code": "ERROR_CODE",
+    "message": "Error message describing the issue."
+  }
+}
+```
+
+#### Batch Processing
+Each component supports batch processing for various periodic tasks such as data synchronization, reconciliation, and reporting. Details of these processes are provided in the respective sections.
+
+#### Kafka Integration
+Real-time updates and events are streamed via Kafka topics. Each component has specific topics with well-defined message formats.
+
+### Example Integration Workflow
+1. **Customer Creation**: Use the CIMS API to create a new customer.
+2. **Account Opening**: Once the customer is created, use the AMS API to open a new account for the customer.
+3. **Transaction Processing**: Use the TPS API to initiate transactions from the customer’s account.
+4. **Payment Processing**: Use the PGI API to process payments to merchants.

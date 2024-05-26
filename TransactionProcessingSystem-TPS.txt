@@ -1,0 +1,124 @@
+
+### **Transaction Processing System (TPS)**
+- **Function**: Handles all financial transactions, including deposits, withdrawals, transfers, and payments.
+- **APIs**: Initiate transactions, check transaction status, retrieve transaction history, and validate transaction details.
+- **Batch Components**: End-of-day processing, transaction reconciliation, and periodic reporting.
+- **Kafka Components**: Real-time transaction processing, fraud detection alerts, and transaction event streaming.
+- **Documentation**: API specifications, transaction workflow documentation, and guidelines for batch processing integration.
+
+### Transaction Processing System (TPS)
+
+#### Open API Specification (OpenAPI 3.0)
+```yaml
+openapi: 3.0.1
+info:
+  title: Transaction Processing System API
+  version: 1.0.0
+  description: API for handling financial transactions.
+servers:
+  - url: https://api.bank.com/v1
+paths:
+  /transactions:
+    post:
+      summary: Initiate a transaction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Transaction'
+      responses:
+        '201':
+          description: Transaction created successfully
+  /transactions/{transactionId}:
+    get:
+      summary: Get a transaction by ID
+      parameters:
+        - name: transactionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Transaction details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transaction'
+components:
+  schemas:
+    Transaction:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        amount:
+          type: number
+        currency:
+          type: string
+        status:
+          type: string
+        fromAccount:
+          type: string
+        toAccount:
+          type: string
+        timestamp:
+          type: string
+```
+
+#### API Documentation
+- **POST /transactions**: Initiates a new transaction. Requires a JSON body with transaction details.
+- **GET /transactions/{transactionId}**: Retrieves a transaction by its ID.
+
+#### Code Snippets
+```python
+import requests
+
+# Base URL
+base_url = "https://api.bank.com/v1"
+
+# Create a new transaction
+new_transaction = {
+    "type": "transfer",
+    "amount": 100.00,
+    "currency": "USD",
+    "fromAccount": "account123",
+    "toAccount": "account456"
+}
+response = requests.post(f"{base_url}/transactions", json=new_transaction)
+print(response.json())
+
+# Get transaction by ID
+transaction_id = "transaction123"
+response = requests.get(f"{base_url}/transactions/{transaction_id}")
+print(response.json())
+```
+
+#### Kafka Topic Details
+- **Topic Name**: `transaction-events`
+- **Purpose**: To stream real-time transaction events.
+- **Message Format**: JSON
+```json
+{
+  "event": "TRANSACTION_CREATED",
+  "transactionId": "transaction123",
+  "details": {
+    "type": "transfer",
+    "amount": 100.00,
+    "currency": "USD",
+    "fromAccount": "account123",
+    "toAccount": "account456",
+    "status": "Pending",
+    "timestamp": "2024-05-17T12:34:56Z"
+  }
+}
+```
+
+#### Documentation
+- **API Specification**: Details the REST endpoints, request and response formats.
+- **Integration Guide**: Steps on how to use the APIs, including authentication and error handling.
+- **Kafka Integration**: Explains the Kafka topics, message formats, and how to consume messages.
+- **Batch Processing**: Describes periodic batch processes for transaction reconciliation and reporting.
