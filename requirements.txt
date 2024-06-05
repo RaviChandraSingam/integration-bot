@@ -10,6 +10,10 @@ chromadb
 Ipython
 typing
 langchain_text_splitters
+Flask
+request
+jsonify
+flask-cors
 # pydantic
 # typing-inspect
 # typing_extensions
